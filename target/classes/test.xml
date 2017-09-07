@@ -1,0 +1,23 @@
+<?xml version='1.0' ?>
+ <SalesData>
+    <PaymentInfo xmls="http://example.com/payment">
+        <CustomerName>Simon</CustomerName>
+        <Amount>1000</Amount>
+        <CreditCardInfo>
+            <ID>2034994949499</ID>
+            <Issuer>CMB</Issuer>
+            <Expiration>06/2017</Expiration>
+            <Currency>USD</Currency>
+        </CreditCardInfo>
+    </PaymentInfo>
+    <PaymentInfo xmls="http://example.com/payment">
+        <CustomerName>Peter</CustomerName>
+        <Amount>2000</Amount>
+        <CreditCardInfo>
+            <ID>2333034994949499</ID>
+            <Issuer>CMB</Issuer>
+            <Expiration>06/2017</Expiration>
+            <Currency>USD</Currency>
+        </CreditCardInfo>
+    </PaymentInfo>
+</SalesData>

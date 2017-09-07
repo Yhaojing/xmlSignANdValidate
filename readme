@@ -1,0 +1,42 @@
+xml 数字签名  ( Reference:  https://www.ibm.com/developerworks/cn/xml/x-cn-java6xmlsignature/)
+数字签名使用非对称秘钥技术,保证报文的完整性,不可否认行,提供身份验证,xml在数据交换的过程中用的十分广泛
+所有与 XML 数字签名相关的信息都存放在 <Signature> 元素中。<Signature> 元素包含有几个主要的子元素：
+<Reference> 元素至少包含一个 <Reference> 元素，每个 <Reference> 元素用于对待签名数据进行引用，包含有引用方式、转换方法、摘要算法和摘要值等信息。<Reference> 还包含有 XML 数据的规则化方法，并指定了数字签名所使用的算法。
+<SignatureValue> 元素包含对 <Reference> 元素规范化后的内容进行签名生成的数字签名的值。
+<KeyInfo> 元素用于指定验证签名所需的公共密钥相关信息。
+XML 数字签名的过程大致为：
+1.	根据每个 <Reference> 元素中指定的资源引用方式，摘要算法，数据转换方法等信息，对引用资源进行转换，然后对转换后的结果计算出摘要值。
+2.	根据 <SignedInfo> 元素中指定的 XML 数据的规范化方法对 <SignedInfo> 规则化，对规范化之后的数据生成摘要值，并使用私钥对摘要值进行加密，将生成的加密摘要值存放在 <SignatureValue> 元素中。
+XML 数字签名的验证
+XML 数字签名的验证主要包括两个步骤，首先需要对 <SignedInfo> 元素中包含的数据引用部分进行验证，然后对整个 <SignedInfo> 元素的签名值进行验证。其间任何一步验证失败则代表整个 XML 数字签名验证失败。
+1.	对数据引用的验证
+对 <SignedInfo> 中每一个 <Reference> 执行如下验证步骤：
+1)	应用指定的数据转换方法取得引用的数据对象
+2)	使用指定的摘要生成算法生成摘要值
+3)	将生成的摘要值同 <Reference> 中 <DigestValue> 元素包含的摘要值相比较，如果不匹配，则验证失败。
+2.	对 <SignedInfo> 签名值的验证
+1)	从 <KeyInfo> 元素中的 <KeyValue> 元素或者根据 <KeyInfo> 元素中指定的信息从外部获取用于验证数字签名的数据发送方公共密钥。
+2)	使用验证密钥将 <SignatureValue> 元素中的加密签名值解密，得到值 D
+3)	使用 <SignatureMethod> 元素指定的签名算法对规则化之后的 <SignedInfo> 元素计算摘要值，得到值 D’
+4)	判断 D 和 D’ 是否匹配，如果不匹配，则验证失败。
+
+生成签名
+1.	创建 XMLSignatureFactory 实例
+2.	创建对整个 XML 文档的引用<Reference>创建 Reference 的时候将 URI 参数指定为 "" 表示对整个 XML 文档进行引用；摘要算法指定为 SHA1；这里将转换方式指定为 ENVELOPED，这样在对整个文档进行引用并生成摘要值的时候，<Signature> 元素不会被计算在内。
+3.	创建 <SignedInfo> 元素因为最终的数字签名是针对 <SignedInfo> 元素而生成的，所以需要指定该 XML 元素的规范化方法，以确定最终被处理的数据。这里指定为 INCLUSIVE_WITH_COMMENTS, 表示在规范化 XML 内容的时候会将 XML 注释也包含在内。
+至此，待签名的内容（<SignedInfo> 元素）已指定好，再只需要签名所使用的密钥就可以创建数字签名了。
+4.	创建密钥对,或者用提前生成的秘钥对来进行加密生成<KeyInfo>
+5.	创建 <Signature> 元素 根据之前创建好的 <SignedInfo> 和 <KeyInfo> 元素，为了生成最终的数字签名，需要根据这两个元素先创建 <Signature> 元素，然后进行签名，创建出 <SignatureValue> 元素。
+6.	最后一步，生成签名 signature.sign(domSignCtx);
+7.  签名文档输出
+
+验证签名
+1.	解析签名后生成的 XML 文档
+2.	查找签名元素
+3.	构造 <Signature> 元素
+4.	获取验证签名所需的公共密钥
+5.	创建DOMValidateContext
+6.	验证签名
+
+
+
